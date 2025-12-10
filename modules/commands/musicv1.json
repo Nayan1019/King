@@ -1,0 +1,352 @@
+const fs = require("fs");
+const path = require("path");
+const axios = require("axios");
+const ytSearch = require("yt-search");
+const zlib = require("zlib");
+
+module.exports = {
+  config: {
+    name: "music",
+    aliases: ["yt", "ytmusic"],
+    description: "Download music from YouTube by song name",
+    usage: "{prefix}music <song name>",
+    credit: "𝐏𝐫𝐢𝐲𝐚𝐧𝐬𝐡 𝐑𝐚𝐣𝐩𝐮𝐭",
+    category: "MEDIA",
+    hasPrefix: true,
+    permission: 'PUBLIC',
+    cooldown: 5
+  },
+
+  run: async function ({ api, message, args }) {
+    const { threadID, messageID } = message;
+
+    if (!args.length) {
+      return api.sendMessage("❌ Please enter a song name.\n\nExample: /music kesariya", threadID, messageID);
+    }
+
+    const input = args.join(" ");
+    const searchingMessage = await api.sendMessage(`🔍 Searching for: ${input}`, threadID);
+
+      // Store the messageID of the searching message
+      const searchingMessageID = searchingMessage.messageID;
+
+    try {
+      let video;
+      
+      // Check if input is a YouTube URL
+      const youtubeUrlRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+      const urlMatch = input.match(youtubeUrlRegex);
+      
+      if (urlMatch) {
+        // If YouTube URL, extract video ID and get info
+        const videoId = urlMatch[1];
+        const videoInfo = await ytSearch({ videoId });
+        video = videoInfo;
+      } else {
+        // If search query, search YouTube
+        const searchResult = await ytSearch(input);
+        if (!searchResult.videos.length) {
+          return api.sendMessage("❌ Song not found on YouTube.", threadID, messageID);
+        }
+        video = searchResult.videos[0];
+      }
+      
+      // Get API key from global config
+      const apiKey = global.config.apiKeys?.priyanshuApi || process.env.PRIYANSHU_API_KEY;
+      if (!apiKey || apiKey === "YOUR_API_KEY") {
+        return api.sendMessage("❌ API key not configured. Please set PRIYANSHU_API_KEY in config.json or environment variables.", threadID, messageID);
+      }
+
+      // Use new API endpoint
+      const apiURL = "https://priyanshuapi.xyz/api/runner/yt-download/fetch";
+      const { data } = await axios.post(apiURL, {
+        url: `https://youtube.com/watch?v=${video.videoId}`,
+        format: "audio"
+      }, {
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json"
+        }
+      });
+
+      // Check if API response is successful
+      if (!data.downloadUrl) {
+        return api.sendMessage("❌ Failed to get download link from API.", threadID, messageID);
+      }
+
+      console.log(`🎯 Audio details: ${data.mediaQuality} ${data.mediaExtension} (${data.mediaFileSize})`);
+      console.log(`📋 Duration: ${data.mediaDuration}`);
+
+      const downloadUrl = data.downloadUrl;
+
+      // Send info message first (limit description to 200 chars to avoid long messages)
+      const shortDescription = data.description ? 
+        (data.description.length > 200 ? data.description.substring(0, 200) + '...' : data.description)
+        : 'No description';
+      
+      const infoMsg = `🎵 Title: ${data.title}
+⏱ Duration: ${data.mediaDuration} | 📥 Quality: ${data.mediaQuality}
+📊 Size: ${data.mediaFileSize} | 📺 Views: ${data.views}
+📝 Description: ${shortDescription}
+🔗 Download: ${data.downloadUrl}
+⏳ Downloading... Please wait...`;
+
+      api.sendMessage(infoMsg, threadID, (err) => {
+        if (!err) {
+          api.unsendMessage(searchingMessageID);
+        }
+      });
+
+      const folderPath = path.join(__dirname, "temp");
+      if (!fs.existsSync(folderPath)) fs.mkdirSync(folderPath);
+
+      const fileName = `${Date.now()}.m4a`;
+      const filePath = path.join(folderPath, fileName);
+
+      // Download with optimized settings
+      const writer = fs.createWriteStream(filePath);
+      let downloadedBytes = 0;
+      const totalSize = parseFloat(data.mediaFileSize.replace(/[^\d.]/g, '')) * 1024 * 1024; // Convert MB to bytes
+      let downloadStartTime = Date.now();
+      
+      console.log(`🎵 Starting download: ${data.mediaQuality} (${data.mediaFileSize})`);
+      console.log(`📊 Estimated size: ${data.mediaFileSize}`);
+
+      try {
+        const response = await axios({
+          method: "GET",
+          url: downloadUrl,
+          responseType: "stream",
+          maxRedirects: 10,
+          timeout: 120000, // 2 minute timeout
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': '*/*',
+            'Accept-Encoding': 'identity',
+            'Connection': 'keep-alive'
+          },
+          maxContentLength: 100 * 1024 * 1024, // 100MB max
+          maxBodyLength: 100 * 1024 * 1024 // 100MB max
+        });
+
+        // Track download progress with better logging
+        response.data.on('data', (chunk) => {
+          downloadedBytes += chunk.length;
+          const elapsed = (Date.now() - downloadStartTime) / 1000;
+          const speed = (downloadedBytes / 1024 / 1024 / elapsed).toFixed(2);
+          const progress = totalSize > 0 ? Math.round((downloadedBytes / totalSize) * 100) : 0;
+          
+          // Log every 10% or every 5 seconds
+          if (progress % 10 === 0 && progress > 0 && progress <= 100) {
+            console.log(`📥 Download: ${progress}% (${speed} MB/s) - ${(downloadedBytes / 1024 / 1024).toFixed(2)} MB`);
+          } else if (elapsed % 5 < 1 && elapsed > 0) {
+            console.log(`📥 Download: ${(downloadedBytes / 1024 / 1024).toFixed(2)} MB (${speed} MB/s)`);
+          }
+        });
+
+        response.data.pipe(writer);
+
+        // Add download timeout
+        const downloadTimeout = setTimeout(() => {
+          console.log('⏰ Download timeout - taking too long');
+          writer.destroy();
+          fs.unlink(filePath, () => {});
+          api.sendMessage("❌ Download is taking too long. Please try a different song.", threadID, messageID);
+        }, 180000); // 3 minute timeout
+
+        writer.on("finish", () => {
+          clearTimeout(downloadTimeout);
+          const downloadTime = ((Date.now() - downloadStartTime) / 1000).toFixed(1);
+          console.log(`✅ Download completed in ${downloadTime}s`);
+          
+          // Smart sending optimization based on file size
+          const sendStartTime = Date.now();
+          const fileStats = fs.statSync(filePath);
+          const fileSizeMB = (fileStats.size / 1024 / 1024).toFixed(2);
+          console.log(`📤 Starting optimized send (${fileSizeMB}MB)...`);
+          
+          // Use optimized sending strategy
+          sendOptimizedFile(filePath, threadID, video.title, fileStats.size);
+        });
+
+        writer.on("error", (error) => {
+          clearTimeout(downloadTimeout);
+          console.error('Download error:', error);
+          fs.unlink(filePath, () => {});
+          api.sendMessage("❌ Failed to download the song.", threadID, messageID);
+        });
+
+        // Handle response errors
+        response.data.on('error', (error) => {
+          clearTimeout(downloadTimeout);
+          console.error('Stream error:', error);
+          fs.unlink(filePath, () => {});
+          api.sendMessage("❌ Download stream failed.", threadID, messageID);
+        });
+
+      } catch (downloadError) {
+        console.error('Download request failed:', downloadError.message);
+        console.error('Error details:', downloadError.response?.status);
+        
+        fs.unlink(filePath, () => {});
+        let errorMsg = "❌ Failed to download. ";
+        
+        if (downloadError.response?.status === 403) {
+          errorMsg += "Access denied. The download link may have expired. Try again.";
+        } else if (downloadError.response?.status === 429) {
+          errorMsg += "Too many requests. Please try again later.";
+        } else if (downloadError.code === 'ECONNABORTED') {
+          errorMsg += "Download timeout. The song file might be too large.";
+        } else {
+          errorMsg += "Please try again.";
+        }
+        
+        api.sendMessage(errorMsg, threadID, messageID);
+      }
+
+    } catch (error) {
+      console.error('Music command error:', error);
+      api.sendMessage("❌ An error occurred while processing your request.", threadID, messageID);
+    }
+  }
+};
+
+// Optimized sending functions with Facebook API optimizations
+function sendSmallFile(filePath, threadID, title) {
+  const sendStartTime = Date.now();
+  
+  // Optimize filename for Facebook API
+  const optimizedFilename = `${title.substring(0, 30).replace(/[^a-zA-Z0-9]/g, '_')}.m4a`;
+  
+  const audioMsg = {
+    attachment: fs.createReadStream(filePath)
+  };
+
+  // Use optimized sendMessage with callback
+  api.sendMessage(audioMsg, threadID, (err) => {
+    const sendTime = ((Date.now() - sendStartTime) / 1000).toFixed(1);
+    if (!err) {
+      console.log(`✅ Fast send completed in ${sendTime}s`);
+      setTimeout(() => fs.unlink(filePath, () => {}), 30000);
+    } else {
+      console.error(`❌ Fast send failed:`, err);
+      // Try with basic attachment (no metadata)
+      setTimeout(() => {
+        console.log(`🔄 Retrying with basic attachment...`);
+        api.sendMessage({
+          attachment: fs.createReadStream(filePath)
+        }, threadID, (retryErr) => {
+          if (!retryErr) {
+            console.log(`✅ Basic retry successful`);
+            setTimeout(() => fs.unlink(filePath, () => {}), 30000);
+          } else {
+            console.error(`❌ Basic retry failed:`, retryErr);
+            fs.unlink(filePath, () => {});
+          }
+        });
+      }, 1000);
+    }
+  });
+}
+
+function sendLargeFile(filePath, threadID, title) {
+  const sendStartTime = Date.now();
+  
+  // For large files, use basic sending with retry mechanism
+  const audioMsg = {
+    attachment: fs.createReadStream(filePath)
+  };
+
+  // Send with longer timeout for large files
+  const sendTimeout = setTimeout(() => {
+    console.log('⏰ Send timeout for large file');
+    fs.unlink(filePath, () => {});
+  }, 60000); // 1 minute timeout for sending
+
+  api.sendMessage(audioMsg, threadID, (err) => {
+    clearTimeout(sendTimeout);
+    const sendTime = ((Date.now() - sendStartTime) / 1000).toFixed(1);
+    
+    if (!err) {
+      console.log(`✅ Large file send completed in ${sendTime}s`);
+      setTimeout(() => fs.unlink(filePath, () => {}), 30000);
+    } else {
+      console.error(`❌ Large file send failed:`, err);
+      // Try alternative sending method
+      setTimeout(() => {
+        console.log(`🔄 Retrying large file send...`);
+        api.sendMessage({
+          attachment: fs.createReadStream(filePath)
+        }, threadID, (retryErr) => {
+          if (!retryErr) {
+            console.log(`✅ Large file retry successful`);
+            setTimeout(() => fs.unlink(filePath, () => {}), 30000);
+          } else {
+            console.error(`❌ Large file retry failed:`, retryErr);
+            fs.unlink(filePath, () => {});
+          }
+        });
+      }, 3000);
+    }
+  });
+}
+
+// Optimized sending for different file sizes
+function sendOptimizedFile(filePath, threadID, title, fileSize) {
+  const sendStartTime = Date.now();
+  const fileSizeMB = (fileSize / 1024 / 1024).toFixed(2);
+  
+  console.log(`📤 Sending ${fileSizeMB}MB file with optimizations...`);
+  
+  const audioMsg = {
+    attachment: fs.createReadStream(filePath)
+  };
+
+  // Use different strategies based on file size
+  if (fileSize > 15 * 1024 * 1024) { // > 15MB
+    console.log(`🚀 Using large file strategy...`);
+    // For very large files, use longer timeout
+    const sendTimeout = setTimeout(() => {
+      console.log('⏰ Send timeout for very large file');
+      fs.unlink(filePath, () => {});
+    }, 120000); // 2 minute timeout
+    
+    api.sendMessage(audioMsg, threadID, (err) => {
+      clearTimeout(sendTimeout);
+      const sendTime = ((Date.now() - sendStartTime) / 1000).toFixed(1);
+      if (!err) {
+        console.log(`✅ Large file send completed in ${sendTime}s`);
+        setTimeout(() => fs.unlink(filePath, () => {}), 30000);
+      } else {
+        console.error(`❌ Large file send failed:`, err);
+        fs.unlink(filePath, () => {});
+      }
+    });
+  } else {
+    // Standard sending for smaller files
+    api.sendMessage(audioMsg, threadID, (err) => {
+      const sendTime = ((Date.now() - sendStartTime) / 1000).toFixed(1);
+      if (!err) {
+        console.log(`✅ Optimized send completed in ${sendTime}s`);
+        setTimeout(() => fs.unlink(filePath, () => {}), 30000);
+      } else {
+        console.error(`❌ Optimized send failed:`, err);
+        // Fallback to basic sending
+        setTimeout(() => {
+          console.log(`🔄 Retrying with basic method...`);
+          api.sendMessage({
+            attachment: fs.createReadStream(filePath)
+          }, threadID, (retryErr) => {
+            if (!retryErr) {
+              console.log(`✅ Basic retry successful`);
+              setTimeout(() => fs.unlink(filePath, () => {}), 30000);
+            } else {
+              console.error(`❌ Basic retry failed:`, retryErr);
+              fs.unlink(filePath, () => {});
+            }
+          });
+        }, 2000);
+      }
+    });
+  }
+}

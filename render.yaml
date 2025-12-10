@@ -1,0 +1,15 @@
+# Render.com configuration file
+services:
+  - type: web
+    name: fb-messenger-bot
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm run render-start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+    healthCheckPath: /
+    autoDeploy: true

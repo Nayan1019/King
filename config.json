@@ -1,0 +1,80 @@
+{
+  "mongoURI": "",
+  "ownerID": "100037743553265",
+  "adminIDs": [
+    "100037743553265",
+    "ADMIN_ID_2"
+  ],
+  "supportIDs": [
+    "100037743553265",
+    "SUPPORT_ID_2"
+  ],
+  "adminInboxThreadID": "6567071300016227",
+  "prefix": "/",
+  "fcaOptions": {
+    "forceLogin": false,
+    "updatePresence": true,
+    "listenEvents": true,
+    "logLevel": "silent",
+    "selfListen": false,
+    "autoMarkRead": false,
+    "autoMarkDelivery": false,
+    "online": true,
+    "emitReady": false,
+    "autoReconnect": true,
+    "userAgent": "Mozilla/5.0 (X11; Linux aarch64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 CrKey/1.54.250320"
+  },
+  "botNickname": "FB Bot",
+  "commandEnabled": true,
+  "eventEnabled": true,
+  "announceImageChange": true,
+  "announceNameChange": true,
+  "announceNicknameChange": true,
+  "debug": false,
+  "logsEnabled": true,
+  "disabledCommands": [
+    "imagine3"
+  ],
+  "server": {
+    "enabled": true,
+    "port": 4000,
+    "autoUptimeMonitoring": true
+  },
+  "serverUrl": "http://localhost:4000",
+  "spamBan": {
+    "enabled": true,
+    "maxCommands": 10,
+    "timeWindowMinutes": 1,
+    "banDurationHours": 24
+  },
+  "autosend": {
+    "enabled": false,
+    "checkIntervalMinutes": 1
+  },
+  "sessionManagement": {
+    "enabled": true,
+    "refreshIntervalMinutes": 10,
+    "dtsgRefreshHours": 2,
+    "maxReconnectAttempts": 5,
+    "autoSaveAppstate": true
+  },
+  "apiKeys": {
+    "priyanshuApi": ""
+  },
+  "facebookToken": "",
+  "spamBanSettings": {
+    "enabled": true,
+    "maxCommands": 10,
+    "timeWindow": 60000,
+    "banDuration": 86400000
+  },
+  "adminOnlyMode": {
+    "global": false,
+    "mode": "public"
+  },
+  "github": {
+    "token": "YOUR_GITHUB_TOKEN",
+    "owner": "YOUR_USERNAME",
+    "repo": "YOUR_REPO_NAME"
+  }
+}

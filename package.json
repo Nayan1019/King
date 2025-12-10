@@ -1,0 +1,53 @@
+{
+  "name": "priyanshu-fb-bot",
+  "version": "1.0.0",
+  "description": "Facebook Messenger chatbot using fca-priyansh",
+  "main": "index.js",
+  "scripts": {
+    "start": "node start.js",
+    "start:direct": "node index.js",
+    "dev": "nodemon index.js",
+    "render-start": "node start-render.js",
+    "test-server": "node test-server.js"
+  },
+  "dependencies": {
+    "@iamtraction/google-translate": "^2.0.1",
+    "@prettier/plugin-php": "^0.24.0",
+    "@prettier/plugin-xml": "^3.4.2",
+    "axios": "^1.10.0",
+    "axios-cookiejar-support": "^6.0.4",
+    "canvas": "^3.2.0",
+    "chalk": "^4.1.2",
+    "cloudscraper": "^4.6.0",
+    "discord-image-generation": "^1.4.25",
+    "express": "^5.2.1",
+    "fca-priyansh": "^20.0.0",
+    "fs-extra": "^11.1.0",
+    "googlethis": "^1.8.0",
+    "https": "^1.0.0",
+    "moment-timezone": "^0.5.40",
+    "mongoose": "^6.9.0",
+    "node-cron": "^3.0.2",
+    "openai": "^6.10.0",
+    "pastebin-api": "^7.0.0",
+    "prettier": "^3.6.2",
+    "prettier-plugin-astro": "^0.14.1",
+    "prettier-plugin-tailwindcss": "^0.6.14",
+    "priyansh-all-dl": "^2.0.2",
+    "streamifier": "^0.1.1",
+    "tempy": "^1.0.1",
+    "unique-random-useragent": "^2.0.0",
+    "uuid": "^8.3.2",
+    "websocket-stream": "^5.5.2",
+    "yt-search": "^2.13.1"
+  },
+  "engines": {
+    "node": "20.15.1",
+    "npm": "10.7.0"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
