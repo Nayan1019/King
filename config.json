@@ -1,16 +1,16 @@
 {
-  "mongoURI": "",
-  "ownerID": "100037743553265",
+  "mongoURI": "mongodb+srv://ronitgyansharma1234_db_user:yjnVtZkg0apw9pQc@cluster0.zspheux.mongodb.net/?appName=Cluster0",
+  "ownerID": "100018077753687",
   "adminIDs": [
-    "100037743553265",
-    "ADMIN_ID_2"
+    "100018077753687",
+    "61583404487361"
   ],
   "supportIDs": [
-    "100037743553265",
+    "100018077753687",
     "SUPPORT_ID_2"
   ],
-  "adminInboxThreadID": "6567071300016227",
-  "prefix": "/",
+  "adminInboxThreadID": "100018077753687",
+  "prefix": "✓",
   "fcaOptions": {
     "forceLogin": false,
     "updatePresence": true,
@@ -60,7 +60,7 @@
   },
   "unsendReaction": "🖤",
   "apiKeys": {
-    "priyanshuApi": ""
+    "priyanshuApi": "apim__kTEKVrfFQjpX_cpnxNHPdFnTMTzn6KdiwQTxBkBBLU"
   },
   "facebookToken": "",
   "spamBanSettings": {
