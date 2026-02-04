@@ -10,7 +10,7 @@
     "SUPPORT_ID_2"
   ],
   "adminInboxThreadID": "100018077753687",
-  "prefix": "✓",
+  "prefix": "#",
   "fcaOptions": {
     "forceLogin": false,
     "updatePresence": true,
