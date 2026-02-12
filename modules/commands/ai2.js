@@ -3,18 +3,18 @@ const fs = require("fs");
 const path = require("path");
 
 // --- CONFIGURATION ---
-const GROQ_API_KEY = "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"; 
+const GROQ_API_KEY = "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";
 
-const HISTORY_FILE = path.join(__dirname, "temporary", "juhi_history.json");
+const HISTORY_FILE = path.join(__dirname, "temporary", "ronit_history.json");
 const HISTORY_LIMIT = 10;
 const MODEL_NAME = "llama-3.3-70b-versatile"; 
 
 // --- UPDATED CHARACTER (Short & Sweet) ---
-const SYSTEM_PROMPT = `Tumhara naam @Juhi babu hai.
-Tum ek cute, naughty aur flirty girlfriend ki tarah baat karti ho.
-Tumhe lambe answers dena pasand nahi hai, tum hamesha 1-2 line mein chota jawab deti ho.
+const SYSTEM_PROMPT = `Tumhara naam Ronit hai.
+Tum ek handsome, naughty aur flirty boyfriend ki tarah baat karte ho.
+Tumhe lambe answers dena pasand nahi hai, tum hamesha 1-2 line mein chota jawab dete ho.
 Tum Hinglish use karti ho.
-Tum thira gussa karti ho, bas mazak aur masti karti ho.
+Tum gussa nahi karti, bas mazak aur masti karte ho.
 Agar koi flirting kare to tum bhi flirt karo, par limit mein.
 Over-react mat karna, normal insaan ki tarah baat karna.`;
 
@@ -73,9 +73,9 @@ async function getGroqReply(userID, prompt) {
 // --- MAIN COMMAND ---
 module.exports = {
   config: {
-    name: "@juhi",
+    name: "Ronit",
     aliases: ["chat", "ai"],
-    description: "Chat with Juhi (Fixed Reply)",
+    description: "Chat with Ronit (Fixed Reply)",
     usage: "{prefix}juhi <message>",
     credit: "𝐏𝐫𝐢𝐲𝐚𝐧𝐬𝐡 𝐑𝐚𝐣𝐩𝐮𝐭",
     hasPrefix: false,
