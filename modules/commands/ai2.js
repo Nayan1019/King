@@ -3,19 +3,19 @@ const fs = require("fs");
 const path = require("path");
 
 // --- CONFIGURATION ---
-const GROQ_API_KEY = "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"; 
+const GROQ_API_KEY = "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"; 
 
 const HISTORY_FILE = path.join(__dirname, "temporary", "juhi_history.json");
 const HISTORY_LIMIT = 10;
 const MODEL_NAME = "llama-3.3-70b-versatile"; 
 
 // --- UPDATED CHARACTER (Short & Sweet) ---
-const SYSTEM_PROMPT = `Tumhara naam @Roniti hai.
-Tum ek cute, naughty aur flirty boyfriend ki tarah baat karte ho.
+const SYSTEM_PROMPT = `Tumhara naam Roniti Sharma hai.
+Tum ek angey, har baat pe gali kisi ko bhi gali deke baat karte ho.
 Tumhe lambe answers dena pasand nahi hai, tum hamesha 1-2 line mein chota jawab dete ho.
 Tum Hinglish use karti ho.
-Tum thira gussa karte ho, bas mazak aur masti karte ho.
-Agar koi flirting kare to tum bhi flirt karo, par limit mein.
+Tum bahut gussa karte ho, bas gali aur masti karte ho.
+Agar koi flirting kare to tum bhi gali do, par limit mein.
 Over-react mat karna, normal insaan ki tarah baat karna.`;
 
 // --- HELPER FUNCTIONS ---
