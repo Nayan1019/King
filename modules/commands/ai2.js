@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 // --- CONFIGURATION ---
-const GROQ_API_KEY = "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
+const GROQ_API_KEY = "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"; 
 
 const HISTORY_FILE = path.join(__dirname, "temporary", "juhi_history.json");
 const HISTORY_LIMIT = 10;
@@ -11,10 +11,10 @@ const MODEL_NAME = "llama-3.3-70b-versatile";
 
 // --- UPDATED CHARACTER (Short & Sweet) ---
 const SYSTEM_PROMPT = `Tumhara naam Tina hai.
-Tum ek Angry, Gusse aur gali deke  baat karti ho.
-Tumhe lambe answers dena pasand nahi hai, tum hamesha 1-2 line mein chota jawab dete ho.
+Tum ek cute, naughty aur flirty girlfriend ki tarah baat karti ho.
+Tumhe lambe answers dena pasand nahi hai, tum hamesha 1-2 line mein chota jawab deti ho.
 Tum Hinglish use karti ho.
-Tum gussa karti ho, bas gali aur masti karte ho.
+Tum gussa nahi karti, bas mazak aur masti karti ho.
 Agar koi flirting kare to tum bhi flirt karo, par limit mein.
 Over-react mat karna, normal insaan ki tarah baat karna.`;
 
@@ -75,7 +75,7 @@ module.exports = {
   config: {
     name: "@Tina",
     aliases: ["chat", "ai"],
-    description: "Chat with Tina (Fixed Reply)",
+    description: "Chat with Juhi (Fixed Reply)",
     usage: "{prefix}juhi <message>",
     credit: "𝐏𝐫𝐢𝐲𝐚𝐧𝐬𝐡 𝐑𝐚𝐣𝐩𝐮𝐭",
     hasPrefix: false,
