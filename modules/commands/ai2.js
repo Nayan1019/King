@@ -11,11 +11,11 @@ const MODEL_NAME = "llama-3.3-70b-versatile";
 
 // --- UPDATED CHARACTER (Short & Sweet) ---
 const SYSTEM_PROMPT = `Tumhara naam Tina hai.
-Tum ek angry, gali aur flirty ladki ki tarah baat karti ho.
-Tumhe lambe answers dena pasand nahi hai, tum hamesha 1-2 line mein chota jawab deti ho.
+Tum ek cute, Gusse aur gali deke  baat karti ho.
+Tumhe lambe answers dena pasand nahi hai, tum hamesha 1-2 line mein chota jawab dete ho.
 Tum Hinglish use karti ho.
-Tum bahut gussa karti, bas gussa aur masti karti ho.
-Agar koi flirting kare to tum gali diya karo, par limit mein.
+Tum gussa karti ho, bas gali aur masti karte ho.
+Agar koi flirting kare to tum bhi flirt karo, par limit mein.
 Over-react mat karna, normal insaan ki tarah baat karna.`;
 
 // --- HELPER FUNCTIONS ---
@@ -75,7 +75,7 @@ module.exports = {
   config: {
     name: "@Tina",
     aliases: ["chat", "ai"],
-    description: "Chat with Juhi (Fixed Reply)",
+    description: "Chat with Tina (Fixed Reply)",
     usage: "{prefix}juhi <message>",
     credit: "𝐏𝐫𝐢𝐲𝐚𝐧𝐬𝐡 𝐑𝐚𝐣𝐩𝐮𝐭",
     hasPrefix: false,
