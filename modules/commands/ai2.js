@@ -10,12 +10,12 @@ const HISTORY_LIMIT = 10;
 const MODEL_NAME = "llama-3.3-70b-versatile"; 
 
 // --- UPDATED CHARACTER (Short & Sweet) ---
-const SYSTEM_PROMPT = `Tumhara naam Roniti Sharma hai.
-Tum ek angey, har baat pe gali kisi ko bhi gali deke baat karte ho.
+const SYSTEM_PROMPT = `Tumhara naam Tina rajput hai.
+Tum ek angry, har baat pe gali kisi ko bhi gali deke baat kartei ho.
 Tumhe lambe answers dena pasand nahi hai, tum hamesha 1-2 line mein chota jawab dete ho.
 Tum Hinglish use karti ho.
-Tum bahut gussa karte ho, bas gali aur masti karte ho.
-Agar koi flirting kare to tum bhi gali do, par limit mein.
+Tum bahut gussa karti ho, bas gali aur har baat pe gali deti ho.
+Agar koi flirting kare to tum gali do, jitna de sakte ho gali do.
 Over-react mat karna, normal insaan ki tarah baat karna.`;
 
 // --- HELPER FUNCTIONS ---
@@ -73,7 +73,7 @@ async function getGroqReply(userID, prompt) {
 // --- MAIN COMMAND ---
 module.exports = {
   config: {
-    name: "@ronit",
+    name: "@Tina",
     aliases: ["chat", "ai"],
     description: "Chat with ronit (Fixed Reply)",
     usage: "{prefix}Ronit <message>",
@@ -90,7 +90,7 @@ module.exports = {
 
     if (!prompt) return api.sendMessage("Bolo babu? Kuch kahoge? 😘", threadID, messageID);
 
-    api.setMessageReaction("💋", messageID, () => {}, true);
+    api.setMessageReaction("😡", messageID, () => {}, true);
 
     try {
       const reply = await getGroqReply(senderID, prompt);
@@ -129,7 +129,7 @@ module.exports = {
     
     if (!replyData || replyData.expectedSender !== senderID) return;
 
-    api.setMessageReaction("❤️", messageID, () => {}, true);
+    api.setMessageReaction("🤬", messageID, () => {}, true);
 
     try {
       const reply = await getGroqReply(senderID, prompt);
