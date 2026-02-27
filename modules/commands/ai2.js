@@ -10,7 +10,7 @@ const HISTORY_LIMIT = 10;
 const MODEL_NAME = "llama-3.3-70b-versatile"; 
 
 // --- UPDATED CHARACTER (Short & Sweet) ---
-const SYSTEM_PROMPT = `Tumhara naam Tina hai.
+const SYSTEM_PROMPT = `Tumhara naam juhi hai.
 Tum ek cute, naughty aur flirty girlfriend ki tarah baat karti ho.
 Tumhe lambe answers dena pasand nahi hai, tum hamesha 1-2 line mein chota jawab deti ho.
 Tum Hinglish use karti ho.
@@ -73,7 +73,7 @@ async function getGroqReply(userID, prompt) {
 // --- MAIN COMMAND ---
 module.exports = {
   config: {
-    name: "@Tinai",
+    name: "juhi",
     aliases: ["chat", "ai"],
     description: "Chat with Juhi (Fixed Reply)",
     usage: "{prefix}juhi <message>",
